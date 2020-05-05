@@ -8,6 +8,7 @@ JVM调优基础
 ![JVM 图片](https://tse3-mm.cn.bing.net/th/id/OIP.BD5VTP9JSU5mPURmJfx8BAAAAA?pid=Api&rs=1)
 
 > 虚拟机栈(Java Virtual Machine Stacks)
+
 ![VMStack 图片](https://uploadfiles.nowcoder.com/files/20190111/7380095_1547140255170_4685968-a6b55efe15a7a9ed.png)  
 * 每创建一个线程时就会对应创建一个Java栈，所以Java栈也是"线程私有"的内存区域
 * 每调用一个方法时就会往栈中创建并压入一个栈帧，栈帧是用来<span style="color=red">存储方法数据和部分过程结果的数据结构</span>
@@ -15,12 +16,14 @@ JVM调优基础
 * Current Frame --- 当前活动帧
 
 > 方法区(Method Area 存储类结构信息)
+
 ![MethodArea 图片](https://tse1-mm.cn.bing.net/th/id/OIP.CUdr1UG9vbYt5MZN0_7QOQHaFI?pid=Api&rs=1)
 * 常量池 --- 包含一些常量和符号引用（加载类的连接阶段中的解析过程会将符号引用转换为直接引用）
     * 字符串也是存放在方法区的常量池中
 * 方法区是线程共享的
 
 > 堆(heap 存储Java实例或对象)
+
 ![heap 图片](https://tse1-mm.cn.bing.net/th/id/OIP.U8wg7nxs3yBHzSBH8whM0QHaC-?pid=Api&rs=1)
 * 堆是GC（垃圾回收的主要区域）
 * 堆也是线程共享的
