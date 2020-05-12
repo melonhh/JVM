@@ -46,20 +46,21 @@ JVM判定是否是垃圾数据的一般方法：
 3. 从这些根集变量出发可直接或间接访问的对象即存活对象
 4. 无法到达的对象就会成为下一次垃圾回收的对象
 
-> 例1：Demo1.java
-        
-        public class Demo1 {
-            static Integer i1 = new Integer(1);
-            static Integer i2 = new Integer(1);
-        
-            static Integer a = 1;
-            static Integer b = 1;
-        
-            public static void main(String[] args) {
-                System.out.println(i1==i2);
-                System.out.println(a==b);
-            }
+> 例1：Demo1.java  
+```
+    public class Demo1 {
+        static Integer i1 = new Integer(1);
+        static Integer i2 = new Integer(1);
+    
+        static Integer a = 1;
+        static Integer b = 1;
+    
+        public static void main(String[] args) {
+            System.out.println(i1==i2);
+            System.out.println(a==b);
         }
+    }
+```
 * 结果：false true
 * 执行过程：
     + 执行main之前，创建一个主线程
@@ -68,4 +69,35 @@ JVM判定是否是垃圾数据的一般方法：
     + 初始化i1，i2时访问构造器，构造器也是一种静态方法，所以加载Integer.class
     + 在堆中存放i1、i2对象，栈中变量表内有i1、i2（指向堆中相应的对象）
     + 在方法区的常量池中存放常量1（只有一个），栈中变量表中有a、b（指向同一个1）
-    
+
+## 有关JVM内存的参数配置  
+![jvm内存配置 图片](https://img-blog.csdnimg.cn/20190219111109518.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9saW5udWxpZHVzaHU=,size_16,color_FFFFFF,t_70)
+
+#### -Xms
+> JVM 启动时申请的初始Heap值（默认为物理内存的1/64但小于1G）  
+> （默认当剩余堆内存大于70%时JVM会减小heap的大小到-Xms指定的大小）  
+> （可通过-XX:MaxHeapFreeRation=来指定这个比例）
+
+#### -Xmx
+> JVM可以申请的最大Heap值，（默认值为物理内存的1/4但小于1G）  
+> （默认当剩余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小）  
+> （可通过-XX:MinHeapFreeRation=来指定这个比例）
+
+* 最好将 -Xms 和 -Xmx设为相同值，避免每次垃圾回收完成后JVM重新分配内存，也可以减少垃圾回收次数
+
+#### -Xmn
+> 设置新生代的大小  
+> 对于HotSpot类型的虚拟机来说（堆大小 = 新生代 + 老年代 + 持久代）（持久代一般固定为64M）  
+> 增加新生代大小，将会减少老年代大小，该设置对系统性能影响较大
+
+* 有两种情况对象可直接进入老年代
+    * 大对象：-XX:PretenureSizeThreshold=1024(默认为0)
+        * 即大于1024个字节的对象可直接进入老年代
+    * 大的数组对象，且数组中无引用外部对象
+
+#### -Xss
+> 设置Java每个线程的Stack大小（默认为1M）  
+> 设太大，则最大线程数变少（推荐256K）
+
+#### -XX:PremSize -XX:MaxPremSize (持久代大小，最好设为同一值)
+#### -XX:+MaxTenuringThreshold=10 (垃圾的最大年龄)
